@@ -13,7 +13,11 @@ interface MessageBodyData {
   peerId: string;
 }
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+  },
+})
 export class CallGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   server!: Server;
@@ -29,6 +33,7 @@ export class CallGateway implements OnGatewayDisconnect {
     client.join(roomId);
     client.to(roomId).emit('user-connected', { peerId });
     this.activeUsers.set(client.id, data);
+    console.log(`User ${peerId} joined room ${roomId}`);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
